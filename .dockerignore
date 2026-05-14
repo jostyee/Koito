@@ -11,4 +11,5 @@ testing_init
 client/node_modules
 client/build
 client/.react-router
-
+.DS_Store
+@eaDir

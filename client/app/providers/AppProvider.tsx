@@ -81,15 +81,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       .catch(() => {});
   }, []);
 
-  useEffect(() => {
-    fetch("https://api.github.com/repos/gabehf/koito/releases/latest")
-      .then((r) => r.json())
-      .then((r) => {
-        setUpdateAvailable(isNewerVersion(currentVersion, r.tag_name));
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
   // Block rendering the app until config is loaded
   if (user === undefined || defaultTheme === undefined) {
     return null;
