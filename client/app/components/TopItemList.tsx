@@ -21,7 +21,6 @@ interface Props<T extends Ranked<Item>> {
   className?: string;
   showSeeMore?: boolean;
 }
-
 export default function TopItemList<T extends Ranked<Item>>({
   data,
   slug,
@@ -35,23 +34,23 @@ export default function TopItemList<T extends Ranked<Item>>({
   if (startIndex) data.items.splice(0, startIndex - 1);
   return (
     <div className={`flex flex-col gap-1 ${className} min-w-[200px]`}>
-      {data.items.map((item, index) => {
-        const key = `${type}-${item.item.id}`;
-        return (
-          <div key={key} style={{ fontSize: 12 }} className="mb-0.5">
-            <ItemCard
-              ranked={ranked}
-              rank={item.rank}
-              item={item.item}
-              type={type}
-              key={type + item.item.id}
-            />
-            {separators && index !== data.items.length - 1 && (
-              <div className="border-b border-(--color-bg-tertiary) mt-2" />
-            )}
-          </div>
-        );
-      })}
+      {data.items.map((item, index) => (
+        <div
+          key={`${type}-${item.item.id}`}
+          style={{ fontSize: 12 }}
+          className="mb-0.5"
+        >
+          <ItemCard
+            ranked={ranked}
+            rank={item.rank}
+            item={item.item}
+            type={type}
+          />
+          {separators && index !== data.items.length - 1 && (
+            <div className="border-b border-(--color-bg-tertiary) mt-2" />
+          )}
+        </div>
+      ))}
       {showSeeMore && data.has_next_page && (
         <div className="flex items-center w-full mt-2">
           <Link
@@ -77,135 +76,54 @@ function ItemCard({
   rank: number;
   ranked?: boolean;
 }) {
-  const itemClasses = `flex items-center gap-2`;
+  const isAlbum = type === "album";
+  const isArtist = type === "artist";
+  const typedItem = item as Album & Track & Artist;
 
-  switch (type) {
-    case "album": {
-      const album = item as Album;
+  const meta = isAlbum ? (
+    typedItem.is_various_artists ? (
+      "Various Artists"
+    ) : (
+      <ArtistLinks artists={[typedItem.artists[0]]} />
+    )
+  ) : !isArtist ? (
+    <ArtistLinks artists={typedItem.artists} />
+  ) : undefined;
 
-      return (
-        <table className="sm:text-[15px] text-[13px] border-collapse">
-          <tbody>
-            <tr>
-              {ranked && (
-                <td className="pr-3">
-                  <div
-                    className={`color-fg-secondary text-end ${
-                      rank === 1 && "color-primary"
-                    }`}
-                  >
-                    {rank.toString().padStart(2, "0")}
-                  </div>
-                </td>
-              )}
-              <td className="pr-3 py-1 w-full">
-                <MediaItem
-                  className="gap-2"
-                  image={album.image}
-                  link={`/album/${album.id}`}
-                  size="sm"
-                  title={album.title}
-                  alt={album.title}
-                  meta={
-                    album.is_various_artists ? (
-                      "Various Artists"
-                    ) : (
-                      <ArtistLinks artists={[album.artists[0]]} />
-                    )
-                  }
-                  lazy
-                />
-              </td>
-              <td className="min-w-[75px]">
-                <div className="color-fg-secondary text-end">
-                  {album.listen_count} plays
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      );
-    }
-    case "track": {
-      const track = item as Track;
-
-      return (
-        <table className="sm:text-[15px] text-[13px] border-collapse">
-          <tbody>
-            <tr>
-              {ranked && (
-                <td className="pr-3">
-                  <div
-                    className={`color-fg-secondary text-end ${
-                      rank === 1 && "color-primary"
-                    }`}
-                  >
-                    {rank.toString().padStart(2, "0")}
-                  </div>
-                </td>
-              )}
-              <td className="pr-3 py-1 w-full">
-                <MediaItem
-                  className="gap-2"
-                  image={track.image}
-                  link={`/track/${track.id}`}
-                  size="sm"
-                  title={track.title}
-                  alt={track.title}
-                  subtitle={<ArtistLinks artists={track.artists} />}
-                  lazy
-                />
-              </td>
-              <td className="min-w-[75px]">
-                <div className="color-fg-secondary text-end">
-                  {track.listen_count} plays
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      );
-    }
-    case "artist": {
-      const artist = item as Artist;
-
-      return (
-        <table className="sm:text-[15px] text-[13px] border-collapse">
-          <tbody>
-            <tr>
-              {ranked && (
-                <td className="pr-3">
-                  <div
-                    className={`color-fg-secondary text-end ${
-                      rank === 1 && "color-primary"
-                    }`}
-                  >
-                    {rank.toString().padStart(2, "0")}
-                  </div>
-                </td>
-              )}
-              <td className="pr-3 py-1 w-full">
-                <MediaItem
-                  className="gap-2"
-                  image={artist.image}
-                  size="sm"
-                  link={`/artist/${artist.id}`}
-                  title={artist.name}
-                  alt={artist.name}
-                  lazy
-                />
-              </td>
-              <td className="min-w-[75px]">
-                <div className="color-fg-secondary text-end">
-                  {artist.listen_count} plays
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      );
-    }
-  }
+  return (
+    <table className="table-fixed w-full sm:text-[15px] text-[13px] border-collapse">
+      <tbody>
+        <tr>
+          {ranked && (
+            <td className="w-8 pr-3">
+              <div
+                className={`color-fg-secondary text-end ${rank === 1 && "color-primary"}`}
+              >
+                {rank.toString().padStart(2, "0")}
+              </div>
+            </td>
+          )}
+          <td className="max-w-0 w-full pr-3 py-1">
+            <MediaItem
+              className="gap-2"
+              image={typedItem.image}
+              link={`/${type}/${typedItem.id}`}
+              size="sm"
+              title={isArtist ? typedItem.name : typedItem.title}
+              alt={isArtist ? typedItem.name : typedItem.title}
+              meta={meta}
+              lazy
+            />
+          </td>
+          <td className="w-[75px]">
+            <div className="color-fg-secondary text-end">
+              {typedItem.listen_count} plays
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  );
 }
 
 interface SkeletonProps {

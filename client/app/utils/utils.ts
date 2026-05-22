@@ -42,6 +42,22 @@ function timeSince(date: Date) {
     { label: "second", seconds: 1 },
   ];
 
+  // 1 day
+  if (seconds > 86400) {
+    const dateString = date.toLocaleDateString([], {
+      month: "numeric",
+      year: "2-digit",
+      day: "numeric",
+    });
+
+    const timeString = date
+      .toLocaleTimeString([], {
+        timeStyle: "short",
+      })
+      .replace(" ", "");
+    return `${dateString} ${timeString}`;
+  }
+
   for (const interval of intervals) {
     const count = Math.floor(seconds / interval.seconds);
     if (count >= 1) {

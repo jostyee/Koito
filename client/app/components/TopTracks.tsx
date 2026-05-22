@@ -12,6 +12,7 @@ import CardHeader from "./primitives/CardHeader";
 interface Props {
   limit: number;
   period: string;
+  className?: string;
   showSeeMore?: boolean;
   artistId?: Number;
   albumId?: Number;
@@ -43,7 +44,7 @@ const TopTracks = (props: Props) => {
 
   if (isPending) {
     return (
-      <div className="min-w-[350px] sm:w-[450px] xl:max-w-[450px]">
+      <div className={props.className}>
         <CardHeader isOffset>{header}</CardHeader>
         <div className="mt-7">
           <TopItemListSkeleton count={props.limit} ranked type="track" />
@@ -52,7 +53,7 @@ const TopTracks = (props: Props) => {
     );
   } else if (isError) {
     return (
-      <div className="min-w-[350px] sm:w-[450px] xl:max-w-[450px]">
+      <div className={props.className}>
         <CardHeader isOffset>{header}</CardHeader>
         <p className="error">Error: {error.message}</p>
       </div>
@@ -68,7 +69,7 @@ const TopTracks = (props: Props) => {
 
   if (!data.items[0]) {
     return (
-      <div className="min-w-[350px] sm:w-[450px] xl:max-w-[450px]">
+      <div className={props.className}>
         <CardHeader
           isOffset
           to={`/chart/top/tracks?period=${props.period}${params}`}
@@ -81,7 +82,7 @@ const TopTracks = (props: Props) => {
   }
 
   return (
-    <div className="min-w-[350px] sm:w-[450px] xl:max-w-[450px]">
+    <div className={props.className}>
       <CardHeader
         isOffset
         to={`/chart/top/tracks?period=${props.period}${params}`}

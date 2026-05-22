@@ -54,12 +54,13 @@ export default function Artist() {
     >
       <div className="flex flex-col gap-14">
         <div className="flex flex-col gap-10 md:gap-12 mt-8 max-w-[1400px]">
-          <div className="flex gap-10 md:gap-20 flex-wrap lg:flex-nowrap items-start">
+          <div className="flex gap-10 md:gap-20 flex-wrap xl:flex-nowrap items-start">
             <TopTracks
               limit={8}
               period={period}
               artistId={artist.id}
               showSeeMore
+              className="max-w-[750px] lg:max-w-[450px]"
             />
             <div className="min-w-[350px] flex-1">
               <LastPlayed

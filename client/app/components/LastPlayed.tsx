@@ -32,6 +32,8 @@ const getLastListens = (args: {
 
 const getNowPlaying = () => apiFetch<NowPlaying>("/apis/web/v1/now-playing");
 
+const sizeClasses = "w-full max-w-[750px] lg:max-w-[1200px]";
+
 export default function LastPlays(props: Props) {
   const args = {
     limit: props.limit,
@@ -70,17 +72,6 @@ export default function LastPlays(props: Props) {
     }
   };
 
-  if (isPending) {
-    return <LastPlaysSkeleton limit={props.limit} />;
-  } else if (isError) {
-    return (
-      <div className="w-[300px] sm:w-[500px]">
-        <h3>{header}</h3>
-        <p className="error">Error: {error.message}</p>
-      </div>
-    );
-  }
-
   const showNP = (): boolean => {
     if (!props.showNowPlaying || !npData?.currently_playing) return false;
 
@@ -96,15 +87,26 @@ export default function LastPlays(props: Props) {
     return false;
   };
 
-  const listens = items ?? data.items;
-
   let params = "";
   params += props.artistId ? `&artist_id=${props.artistId}` : "";
   params += props.albumId ? `&album_id=${props.albumId}` : "";
   params += props.trackId ? `&track_id=${props.trackId}` : "";
 
+  if (isPending) {
+    return <LastPlaysSkeleton limit={props.limit} />;
+  } else if (isError) {
+    return (
+      <div className={`${sizeClasses}`}>
+        <h3>{header}</h3>
+        <p className="error">Error: {error.message}</p>
+      </div>
+    );
+  }
+
+  const listens = items ?? data.items;
+
   return (
-    <div className="text-[13px] sm:text-[15px] w-[350px] sm:w-full max-w-[725px] xl:max-w-[1200px]">
+    <div className={`text-[13px] sm:text-[15px] ${sizeClasses}`}>
       <CardHeader to={`/listens?period=all_time${params}`}>{header}</CardHeader>
       {listens.length < 1 && "Nothing to show"}
       {listens.length < 1 ? (
@@ -119,7 +121,7 @@ export default function LastPlays(props: Props) {
         />
       )}
       {props.showSeeMore && data.has_next_page && (
-        <div className="flex items-center w-[350px] sm:w-full mt-2">
+        <div className="flex items-center w-full mt-2">
           <Link
             to={`/listens?period=all_time${params}`}
             className="inline-block w-fit mx-auto text-(--color-fg-secondary) hover:text-(--color-fg) hover:cursor-pointer"
@@ -138,7 +140,7 @@ interface LastPlaysSkeleton {
 
 export function LastPlaysSkeleton({ limit }: LastPlaysSkeleton) {
   return (
-    <div className="text-[13px] sm:text-[15px] w-[350px] md:w-full max-w-[725px] xl:max-w-[1100px]">
+    <div className={`text-[13px] sm:text-[15px] ${sizeClasses}`}>
       <CardHeader>Last played</CardHeader>
       <div className="flex flex-col mt-6">
         {Array.from({ length: limit }).map((_, i) => (
