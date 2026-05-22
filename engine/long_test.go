@@ -194,6 +194,76 @@ func doSubmitListens(t *testing.T) {
 	}
 }
 
+func doSubmitListensForMergeConflict(t *testing.T) {
+	login(t)
+	getApiKey(t, session)
+	tt := time.Now().Add(-2 * time.Hour).Unix() // yesterday
+	bodies := []string{fmt.Sprintf(`{
+		"listen_type": "single",
+		"payload": [
+			{
+				"listened_at": %d,
+				"track_metadata": {
+					"additional_info": {
+						"artist_mbids": [
+							"efc787f0-046f-4a60-beff-77b398c8cdf4"
+						],
+						"artist_names": [
+							"さユり"
+						],
+						"duration_ms": 275960,
+						"recording_mbid": "21524d55-b1f8-45d1-b172-976cba447199",
+						"release_group_mbid": "3281e0d9-fa44-4337-a8ce-6f264beeae16",
+						"release_mbid": "eb790e90-0065-4852-b47d-bbeede4aa9fc",
+						"submission_client": "navidrome",
+						"submission_client_version": "0.56.1 (fa2cf362)"
+					},
+					"artist_name": "さユり",
+					"release_name": "酸欠少女",
+					"track_name": "花の塔"
+				}
+			}
+		]
+	}`, tt),
+		fmt.Sprintf(`{
+		"listen_type": "single",
+		"payload": [
+			{
+				"listened_at": %d,
+				"track_metadata": {
+					"additional_info": {
+						"artist_mbids": [
+							"efc787f0-046f-4a60-beff-77b398c8cdf4"
+						],
+						"artist_names": [
+							"Sayuri"
+						],
+						"duration_ms": 241560,
+						"recording_mbid": "21524d55-b1f8-45d1-b172-976cba447199",
+						"release_group_mbid": "3281e0d9-fa44-4337-a8ce-6f264beeae16",
+						"release_mbid": "eb790e90-0065-4852-b47d-bbeede4aa9fc",
+						"submission_client": "navidrome",
+						"submission_client_version": "0.56.1 (fa2cf362)"
+					},
+					"artist_name": "Sayuri",
+					"release_name": "Sanketsu Girl",
+					"track_name": "Tower of Flower"
+				}
+			}
+		]
+	}`, tt)}
+	for _, body := range bodies {
+		req, err := http.NewRequest("POST", host()+"/apis/listenbrainz/1/submit-listens", strings.NewReader(body))
+		require.NoError(t, err)
+		req.Header.Add("Authorization", fmt.Sprintf("Token %s", apikey))
+		resp, err := http.DefaultClient.Do(req)
+		require.NoError(t, err)
+		respBytes, err := io.ReadAll(resp.Body)
+		require.NoError(t, err)
+		assert.Equal(t, `{"status": "ok"}`, string(respBytes))
+	}
+}
+
 func TestGetters(t *testing.T) {
 	truncateTestData(t)
 	t.Run("Submit Listens", doSubmitListens)
@@ -301,6 +371,27 @@ func TestMerge(t *testing.T) {
 	assert.EqualValues(t, 2, album.ListenCount)
 
 	truncateTestData(t)
+}
+
+func TestMerge_ConflictingListens(t *testing.T) {
+	truncateTestData(t)
+	t.Run("Submit Listens For Merge Conflict", doSubmitListensForMergeConflict)
+
+	resp, err := makeAuthRequest(t, session, "POST", "/apis/web/v1/artist/1/merge", strings.NewReader(`{"merge_from_id":2}`))
+	require.NoError(t, err)
+	require.Equal(t, 204, resp.StatusCode)
+
+	resp, err = http.DefaultClient.Get(host() + "/apis/web/v1/artist/1")
+	require.NoError(t, err)
+	var artist models.Artist
+	err = json.NewDecoder(resp.Body).Decode(&artist)
+	require.NoError(t, err)
+	assert.EqualValues(t, 1, artist.ListenCount) // conflicting listens should be ignored on merge, so only one remains
+
+	// old artist deleted
+	resp, err = http.DefaultClient.Get(host() + "/apis/web/v1/artist/2")
+	require.NoError(t, err)
+	assert.Equal(t, 404, resp.StatusCode)
 }
 
 func TestValidateToken(t *testing.T) {
