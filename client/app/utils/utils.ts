@@ -50,11 +50,9 @@ function timeSince(date: Date) {
       day: "numeric",
     });
 
-    const timeString = date
-      .toLocaleTimeString([], {
-        timeStyle: "short",
-      })
-      .replace(" ", "");
+    const timeString = date.toLocaleTimeString([], {
+      timeStyle: "short",
+    });
     return `${dateString} ${timeString}`;
   }
 
