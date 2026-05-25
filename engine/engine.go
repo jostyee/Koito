@@ -313,7 +313,7 @@ func RunImporter(l *zerolog.Logger, store db.DB, mbzc mbz.MusicBrainzCaller) {
 			}
 		} else if strings.Contains(file.Name(), "maloja") {
 			l.Info().Msgf("Importer: Import file %s detecting as being Maloja export", file.Name())
-			err := importer.ImportMalojaFile(logger.NewContext(l), store, file.Name())
+			err := importer.ImportMalojaFile(logger.NewContext(l), store, mbzc, file.Name())
 			if err != nil {
 				l.Err(err).Msgf("Importer: Failed to import file: %s", file.Name())
 			}

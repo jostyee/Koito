@@ -31,7 +31,7 @@ type MalojaTrack struct {
 	} `json:"album"`
 }
 
-func ImportMalojaFile(ctx context.Context, store importStore, filename string) error {
+func ImportMalojaFile(ctx context.Context, store importStore, mbzc mbz.MusicBrainzCaller, filename string) error {
 	l := logger.FromContext(ctx)
 	l.Info().Msgf("Beginning maloja import on file: %s", filename)
 	file, err := os.Open(path.Join(cfg.ConfigDir(), "import", filename))
@@ -71,7 +71,7 @@ func ImportMalojaFile(ctx context.Context, store importStore, filename string) e
 			continue
 		}
 		opts := catalog.SubmitListenOpts{
-			MbzCaller:      &mbz.MusicBrainzClient{},
+			MbzCaller:      mbzc,
 			Artist:         item.Track.Artists[0],
 			ArtistNames:    artists,
 			TrackTitle:     item.Track.Title,
