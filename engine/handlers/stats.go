@@ -1,10 +1,13 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gabehf/koito/internal/db"
 	"github.com/gabehf/koito/internal/logger"
+	"github.com/gabehf/koito/internal/memkv"
 	"github.com/gabehf/koito/internal/utils"
 )
 
@@ -37,6 +40,18 @@ func StatsHandler(store statsStore) http.HandlerFunc {
 		tf := TimeframeFromRequest(r)
 
 		l.Debug().Msg("StatsHandler: Fetching statistics")
+
+		cacheKeyString := fmt.Sprintf("stats_%s", r.URL.Query().Encode())
+
+		if cachedStatsI, ok := memkv.Store.Get(cacheKeyString); ok {
+			if cachedStats, ok := cachedStatsI.(*StatsResponse); ok {
+				l.Debug().Msg("StatsHandler: got stats from cache")
+				utils.WriteJSON(w, http.StatusOK, cachedStats)
+				return
+			}
+		}
+
+		l.Debug().Msg("StatsHandler: cache missed for stats")
 
 		listens, err := store.CountListens(r.Context(), tf)
 		if err != nil {
@@ -88,7 +103,8 @@ func StatsHandler(store statsStore) http.HandlerFunc {
 		}
 
 		l.Debug().Msg("StatsHandler: Successfully fetched statistics")
-		utils.WriteJSON(w, http.StatusOK, StatsResponse{
+
+		resp := &StatsResponse{
 			ListenCount:     listens,
 			TrackCount:      tracks,
 			AlbumCount:      albums,
@@ -99,6 +115,11 @@ func StatsHandler(store statsStore) http.HandlerFunc {
 			TracksPerArtist: float32(tracks) / float32(artists),
 			AlbumsPerArtist: float32(albums) / float32(artists),
 			LongestStreak:   longestStreak,
-		})
+		}
+
+		utils.WriteJSON(w, http.StatusOK, resp)
+
+		// save to cache for 30 minutes
+		memkv.Store.Set(cacheKeyString, resp, 30*time.Minute)
 	}
 }
