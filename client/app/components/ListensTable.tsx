@@ -37,6 +37,7 @@ export default function ListensTable({
                   src={npData.track.image.small}
                   size={imgSize}
                   alt={npData.track.title}
+                  lazy
                 />
               </Link>
             </td>

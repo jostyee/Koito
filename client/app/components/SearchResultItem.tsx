@@ -44,7 +44,7 @@ function SearchResultArtistItem(props: Props) {
       className="flex gap-3 items-center w-fit"
       onClick={props.onClick}
     >
-      <div className="relative border rounded-(--border-radius)">
+      <div className="relative">
         <img
           src={props.img}
           style={{
@@ -54,18 +54,25 @@ function SearchResultArtistItem(props: Props) {
           height={150}
         />
         <div
-          className="absolute inset-0 bg-gradient-to-t to-50% from-(--color-bg) to-transparent"
+          className="absolute inset-0 border"
           style={{
-            borderRadius: "var(--border-radius",
-          }}
-        />
-        <div
-          className="absolute inset-0 to-50% bg-gradient-to-t from-(--color-bg) to-transparent"
-          style={{
-            backdropFilter: "blur(0px)",
-            WebkitBackdropFilter: "blur(0px)",
-            maskImage: "linear-gradient(to top, black, transparent)",
-            WebkitMaskImage: "linear-gradient(to top, black, transparent)",
+            // eased with https://larsenwork.com/easing-gradients/
+            backgroundImage: `linear-gradient(to top,
+            var(--color-bg-secondary) 0%,
+            color-mix(in srgb, var(--color-bg-secondary) 99.4%, transparent) 2.9%,
+            color-mix(in srgb, var(--color-bg-secondary) 97.4%, transparent) 6.2%,
+            color-mix(in srgb, var(--color-bg-secondary) 92.6%, transparent) 10.5%,
+            color-mix(in srgb, var(--color-bg-secondary) 84.4%, transparent) 15.5%,
+            color-mix(in srgb, var(--color-bg-secondary) 70.8%, transparent) 21.1%,
+            color-mix(in srgb, var(--color-bg-secondary) 57.8%, transparent) 27%,
+            color-mix(in srgb, var(--color-bg-secondary) 42.2%, transparent) 33%,
+            color-mix(in srgb, var(--color-bg-secondary) 29.2%, transparent) 38.9%,
+            color-mix(in srgb, var(--color-bg-secondary) 15.6%, transparent) 44.5%,
+            color-mix(in srgb, var(--color-bg-secondary) 7.4%, transparent) 49.5%,
+            color-mix(in srgb, var(--color-bg-secondary) 2.6%, transparent) 53.8%,
+            color-mix(in srgb, var(--color-bg-secondary) 0.6%, transparent) 57.1%,
+            transparent 60%
+            )`,
             borderRadius: "var(--border-radius)",
           }}
         />

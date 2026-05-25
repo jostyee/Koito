@@ -13,7 +13,7 @@ export async function clientLoader({ request }: LoaderFunctionArgs) {
   url.searchParams.set("page", page);
 
   const res = await fetch(
-    `/apis/web/v1/listens?${url.searchParams.toString()}`
+    `/apis/web/v1/listens?${url.searchParams.toString()}`,
   );
   if (!res.ok) {
     throw new Response("Failed to load top tracks", { status: 500 });
@@ -37,7 +37,7 @@ export default function Listens() {
       const res = await deleteListen(listen);
       if (res.ok || (res.status >= 200 && res.status < 300)) {
         setItems((prev) =>
-          (prev ?? initialData.items).filter((i) => i.time !== listen.time)
+          (prev ?? initialData.items).filter((i) => i.time !== listen.time),
         );
       } else {
         console.error("Failed to delete listen:", res.status);
@@ -55,7 +55,7 @@ export default function Listens() {
       initialData={initialData}
       endpoint="listens"
       render={({ data, page, onNext, onPrev }) => (
-        <div className="flex flex-col gap-5 text-sm md:text-[16px]">
+        <div className="flex flex-col gap-5 text-sm md:text-[16px] w-11/12 max-w-[1000px]">
           <div className="flex gap-15 mx-auto">
             <button className="default" onClick={onPrev} disabled={page <= 1}>
               Prev
@@ -68,7 +68,7 @@ export default function Listens() {
               Next
             </button>
           </div>
-          <div className="max-w-[1000px]">
+          <div>
             <ListensTable listens={data.items} onDelete={handleDelete} />
           </div>
           <div className="flex gap-15 mx-auto">
