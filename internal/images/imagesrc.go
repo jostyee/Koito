@@ -73,6 +73,10 @@ func Shutdown() {
 
 func GetArtistImage(ctx context.Context, opts ArtistImageOpts) (string, error) {
 	l := logger.FromContext(ctx)
+	if !imgsrc.deezerEnabled && !imgsrc.subsonicEnabled && !imgsrc.lastfmEnabled {
+		l.Warn().Msg("GetArtistImage: No image providers are enabled")
+		return "", nil
+	}
 	if imgsrc.subsonicEnabled {
 		img, err := imgsrc.subsonicC.GetArtistImage(ctx, opts.MBID, opts.Aliases[0])
 		if err != nil {
@@ -103,7 +107,6 @@ func GetArtistImage(ctx context.Context, opts ArtistImageOpts) (string, error) {
 	} else {
 		l.Debug().Msg("GetArtistImage: LastFM image fetching is disabled")
 	}
-	l.Warn().Msg("GetArtistImage: No image providers are enabled")
 	return "", nil
 }
 
