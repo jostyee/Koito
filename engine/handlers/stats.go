@@ -41,7 +41,7 @@ func StatsHandler(store statsStore) http.HandlerFunc {
 
 		l.Debug().Msg("StatsHandler: Fetching statistics")
 
-		cacheKeyString := fmt.Sprintf("stats_%s", r.URL.Query().Encode())
+		cacheKeyString := fmt.Sprintf("stats_%s_%s", r.URL.Query().Encode(), tf.Timezone.String())
 
 		if cachedStatsI, ok := memkv.Store.Get(cacheKeyString); ok {
 			if cachedStats, ok := cachedStatsI.(*StatsResponse); ok {
