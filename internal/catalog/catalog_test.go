@@ -337,8 +337,8 @@ func EqualTime(t testing.TB, t1, t2 time.Time) {
 	const rfc3339Micro = "2006-01-02T15:04:05.999999Z07:00"
 
 	require.Equal(t,
-		t1.Format(rfc3339Micro),
-		t2.Format(rfc3339Micro),
+		t1.In(time.UTC).Format(rfc3339Micro),
+		t2.In(time.UTC).Format(rfc3339Micro),
 	)
 }
 
