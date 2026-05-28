@@ -40,7 +40,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <script src="./loadtheme.js" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function loadtheme() {
+                try {
+                  var bg = localStorage.getItem("bgcolor");
+                  document.documentElement.style.backgroundColor = bg;
+                } catch (e) {
+                  console.log(e);
+                }
+              })();
+            `,
+          }}
+        />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link
