@@ -33,7 +33,7 @@ export default function TopAlbumsCard({ period }: Props) {
     return <TopCardSkeleton header={header} numItems={numItems} />;
   } else if (isError) {
     return (
-      <div className="w-[300px]">
+      <div className="w-[350px]">
         <CardHeader to={`/chart/top/albums?period=${period}`} isOffset>
           {header}
         </CardHeader>
@@ -44,7 +44,7 @@ export default function TopAlbumsCard({ period }: Props) {
 
   if (!data.items[0]) {
     return (
-      <div className="w-[348px]">
+      <div className="w-[350px]">
         <CardHeader to={`/chart/top/albums?period=${period}`} isOffset>
           {header}
         </CardHeader>
@@ -77,26 +77,24 @@ export default function TopAlbumsCard({ period }: Props) {
               // eased with https://larsenwork.com/easing-gradients/
               backgroundImage: `linear-gradient(to top,
               var(--color-bg-secondary) 0%,
-              color-mix(in srgb, var(--color-bg-secondary) 99.4%, transparent) 2.9%,
-              color-mix(in srgb, var(--color-bg-secondary) 97.4%, transparent) 6.2%,
-              color-mix(in srgb, var(--color-bg-secondary) 92.6%, transparent) 10.5%,
-              color-mix(in srgb, var(--color-bg-secondary) 84.4%, transparent) 15.5%,
-              color-mix(in srgb, var(--color-bg-secondary) 70.8%, transparent) 21.1%,
-              color-mix(in srgb, var(--color-bg-secondary) 57.8%, transparent) 27%,
-              color-mix(in srgb, var(--color-bg-secondary) 42.2%, transparent) 33%,
-              color-mix(in srgb, var(--color-bg-secondary) 29.2%, transparent) 38.9%,
-              color-mix(in srgb, var(--color-bg-secondary) 15.6%, transparent) 44.5%,
-              color-mix(in srgb, var(--color-bg-secondary) 7.4%, transparent) 49.5%,
-              color-mix(in srgb, var(--color-bg-secondary) 2.6%, transparent) 53.8%,
-              color-mix(in srgb, var(--color-bg-secondary) 0.6%, transparent) 57.1%,
-              transparent 60%
+              color-mix(in srgb, var(--color-bg-secondary) 99%, transparent) 5%,
+              color-mix(in srgb, var(--color-bg-secondary) 95%, transparent) 12%,
+              color-mix(in srgb, var(--color-bg-secondary) 86%, transparent) 20%,
+              color-mix(in srgb, var(--color-bg-secondary) 72%, transparent) 28%,
+              color-mix(in srgb, var(--color-bg-secondary) 55%, transparent) 36%,
+              color-mix(in srgb, var(--color-bg-secondary) 37%, transparent) 44%,
+              color-mix(in srgb, var(--color-bg-secondary) 22%, transparent) 51%,
+              color-mix(in srgb, var(--color-bg-secondary) 11%, transparent) 57%,
+              color-mix(in srgb, var(--color-bg-secondary) 4%, transparent) 61%,
+              color-mix(in srgb, var(--color-bg-secondary) 1%, transparent) 63.5%,
+              transparent 65%
               )`,
               borderRadius: "var(--border-radius) var(--border-radius) 0 0",
             }}
           />
-          <div className="absolute bottom-10 left-5">
-            <Link to={`/album/${data.items[0].item.id}`}>
-              <h5 className="text-3xl font-semibold">
+          <div className="absolute bottom-8 left-5">
+            <Link to={`/album/${data.items[0].item.id}`} className="">
+              <h5 className="text-3xl font-semibold line-clamp-3 wrap-anywhere text-shadow-lg">
                 {data.items[0]?.item.title}
               </h5>
             </Link>

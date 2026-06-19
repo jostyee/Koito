@@ -91,12 +91,14 @@ export default function MediaItem({
         style={alignTop ? { marginTop: 6 } : undefined}
       >
         <Link to={link} style={{ minWidth: sizeToPx(size) }}>
-          <div className="line-clamp-2 hover:text-(--color-fg-secondary)">
+          <div className="line-clamp-2 wrap-anywhere hover:text-(--color-fg-secondary)">
             {title}
           </div>
         </Link>
         {subtitle !== undefined && (
-          <div className="text-[12px] sm:text-[14px]">{subtitle}</div>
+          <div className="text-[12px] sm:text-[14px] wrap-anywhere">
+            {subtitle}
+          </div>
         )}
         {meta !== undefined && (
           <div className="color-fg-secondary text-[12px] sm:text-[14px]">
